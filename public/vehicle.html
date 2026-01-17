@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Veículo | Catálogo de Carros</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Estilos específicos da página de detalhes */
+        .detail-header {
+            background: var(--gradient-main);
+            color: white;
+            padding: 30px 0;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+            transform: translateX(-5px);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            margin: -60px auto 40px;
+            max-width: 1200px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .gallery-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .main-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            border-radius: 15px;
+            overflow: hidden;
+            background: var(--light);
+            margin-bottom: 15px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .gallery-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-nav.prev {
+            left: 15px;
+        }
+
+        .gallery-nav.next {
+            right: 15px;
+        }
+
+        .thumbnails-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .thumbnail {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.05);
+        }
+
+        .thumbnail.active {
+            border-color: var(--primary);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .vehicle-detail-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .vehicle-detail-price {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .specs-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .spec-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .spec-detail-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .spec-detail-value {
+            font-size: 18px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .description-section {
+            margin-bottom: 30px;
+        }
+
+        .description-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .description-section p {
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .contact-section {
+            background: var(--gradient-main);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1fb855;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .loading-detail {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        @media (max-width: 968px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin: -40px 10px 40px;
+            }
+
+            .vehicle-detail-title {
+                font-size: 26px;
+            }
+
+            .vehicle-detail-price {
+                font-size: 28px;
+            }
+
+            .info-section {
+                padding: 25px;
+            }
+
+            .thumbnails-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="detail-header">
+        <div class="container">
+            <a href="/index.html" class="back-link">← Voltar ao catálogo</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="detail-grid" id="detailContent">
+            <div class="loading-detail">
+                <div class="loading-spinner"></div>
+                <p>Carregando detalhes...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>© 2024 Catálogo de Carros - Todos os direitos reservados</p>
+                <div class="footer-links">
+                    <a href="/index.html" class="footer-link">Voltar ao Catálogo</a>
+                    <a href="/admin/login.html" class="footer-link">Área Administrativa</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let vehicle = null;
+        let currentImageIndex = 0;
+
+        // Carregar detalhes do veículo
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vehicleId = urlParams.get('id');
+
+            if (!vehicleId) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/vehicles/${vehicleId}`);
+                if (!response.ok) {
+                    throw new Error('Veículo não encontrado');
+                }
+
+                vehicle = await response.json();
+                displayVehicleDetails();
+            } catch (error) {
+                console.error('Erro ao carregar veículo:', error);
+                document.getElementById('detailContent').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <h3>Veículo não encontrado</h3>
+            <p><a href="/index.html" class="btn-details">Voltar ao catálogo</a></p>
+          </div>
+        `;
+            }
+        });
+
+        function displayVehicleDetails() {
+            const images = vehicle.images || [];
+            const primaryImage = images.find(img => img.is_primary) || images[0];
+
+            document.title = `${vehicle.marca} ${vehicle.modelo} - Catálogo de Carros`;
+
+            document.getElementById('detailContent').innerHTML = `
+        <div class="gallery-section">
+          <div class="main-image-container">
+            ${images.length > 0 ? `
+              <img src="${images[currentImageIndex].image_path}" alt="Imagem ${currentImageIndex + 1}" class="main-image" id="mainImage">
+              ${images.length > 1 ? `
+                <button class="gallery-nav prev" onclick="previousImage()">‹</button>
+                <button class="gallery-nav next" onclick="nextImage()">›</button>
+              ` : ''}
+            ` : `
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-light);">
+                <div>📷 Sem imagens disponíveis</div>
+              </div>
+            `}
+          </div>
+          
+          ${images.length > 1 ? `
+            <div class="thumbnails-grid">
+              ${images.map((img, index) => `
+                <div class="thumbnail ${index === currentImageIndex ? 'active' : ''}" onclick="selectImage(${index})">
+                  <img src="${img.image_path}" alt="Thumbnail ${index + 1}">
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="info-section">
+          <h1 class="vehicle-detail-title">
+            ${vehicle.marca} ${vehicle.modelo}
+            ${vehicle.destaque ? '<span style="font-size: 24px;">✨</span>' : ''}
+          </h1>
+          <div class="vehicle-detail-price">
+            ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.preco)}
+          </div>
+
+          <div class="specs-detail-grid">
+            <div class="spec-detail-item">
+              <span class="spec-detail-label">📅 Ano</span>
+              <span class="spec-detail-value">${vehicle.ano}</span>
+            </div>
+            <div class="spec-detail-item">
+              <span class="spec-detail-label">🛣️ Quilometragem</span>
+              <span class="spec-detail-value">${vehicle.km.toLocaleString('pt-BR')} km</span>
+            </div>
+            ${vehicle.combustivel ? `
+              <div class="spec-detail-item">
+                <span class="spec-detail-label">⛽ Combustível</span>
+                <span class="spec-detail-value">${vehicle.combustivel}</span>
+              </div>
+            ` : ''}
+            ${vehicle.cambio ? `
+              <div class="spec-detail-item">
+                <span class="spec-detail-label">⚙️ Câmbio</span>
+                <span class="spec-detail-value">${vehicle.cambio}</span>
+              </div>
+            ` : ''}
+            ${vehicle.cor ? `
+              <div class="spec-detail-item">
+                <span class="spec-detail-label">🎨 Cor</span>
+                <span class="spec-detail-value">${vehicle.cor}</span>
+              </div>
+            ` : ''}
+          </div>
+
+          ${vehicle.descricao ? `
+            <div class="description-section">
+              <h3>Descrição</h3>
+              <p>${vehicle.descricao}</p>
+            </div>
+          ` : ''}
+
+          <div class="contact-section">
+            <h3>Interessado neste veículo?</h3>
+            <a href="https://wa.me/5511999999999?text=Olá! Tenho interesse no ${vehicle.marca} ${vehicle.modelo} (${vehicle.ano})" 
+               target="_blank" 
+               class="btn-whatsapp">
+              📱 Entrar em Contato via WhatsApp
+            </a>
+          </div>
+        </div>
+      `;
+        }
+
+        function selectImage(index) {
+            currentImageIndex = index;
+            document.getElementById('mainImage').src = vehicle.images[index].image_path;
+
+            // Atualizar thumbnails
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % vehicle.images.length;
+            selectImage(currentImageIndex);
+        }
+
+        function previousImage() {
+            currentImageIndex = (currentImageIndex - 1 + vehicle.images.length) % vehicle.images.length;
+            selectImage(currentImageIndex);
+        }
+    </script>
+</body>
+
+</html>

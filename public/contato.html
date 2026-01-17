@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - AutoCatálogo</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .contact-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-info h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .info-content h3 {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-content p {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .social-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .social-btn.instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+        }
+
+        .social-btn.facebook {
+            background: #1877F2;
+            color: white;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>AutoCatálogo</span>
+            </a>
+
+            <nav class="header-nav">
+                <a href="/">Estoque</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="vender.html">Vender Carro</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+
+            <div class="header-search">
+                <a href="/" class="btn-primary">Ver Catálogo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <h1>📞 Entre em Contato</h1>
+        <p>Estamos prontos para atender você</p>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="page-container">
+        <div class="contact-grid">
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h2>Informações de Contato</h2>
+
+                <div class="info-item">
+                    <div class="info-icon">📱</div>
+                    <div class="info-content">
+                        <h3>WhatsApp</h3>
+                        <p>(11) 98765-4321</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div class="info-content">
+                        <h3>Email</h3>
+                        <p>contato@autocatalogo.com.br</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div class="info-content">
+                        <h3>Endereço</h3>
+                        <p>Av. Paulista, 1000<br>São Paulo, SP - CEP 01310-100</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">🕐</div>
+                    <div class="info-content">
+                        <h3>Horário de Atendimento</h3>
+                        <p>Segunda a Sexta: 9h às 18h<br>Sábado: 9h às 13h</p>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <a href="https://wa.me/5511987654321" class="social-btn whatsapp" target="_blank"
+                        title="WhatsApp">💬</a>
+                    <a href="https://instagram.com" class="social-btn instagram" target="_blank"
+                        title="Instagram">📷</a>
+                    <a href="https://facebook.com" class="social-btn facebook" target="_blank" title="Facebook">👍</a>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form">
+                <h2 style="margin-bottom: 1.5rem;">Envie uma Mensagem</h2>
+
+                <form onsubmit="enviarMensagem(event)">
+                    <div style="margin-bottom: 1rem;">
+                        <label class="filter-label">Nome Completo</label>
+                        <input type="text" id="nome"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem;"
+                            required />
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label class="filter-label">Email</label>
+                        <input type="email" id="email"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem;"
+                            required />
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label class="filter-label">Telefone</label>
+                        <input type="tel" id="telefone" placeholder="(00) 00000-0000"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem;"
+                            required />
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label class="filter-label">Assunto</label>
+                        <select id="assunto"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem;"
+                            required>
+                            <option value="">Selecione</option>
+                            <option>Informações sobre veículo</option>
+                            <option>Financiamento</option>
+                            <option>Vender meu carro</option>
+                            <option>Agendar test drive</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label class="filter-label">Mensagem</label>
+                        <textarea id="mensagem"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; min-height: 120px; font-family: inherit;"
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-apply-filters" style="width: 100%;">
+                        Enviar Mensagem
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function enviarMensagem(e) {
+            e.preventDefault();
+
+            const dados = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value,
+                assunto: document.getElementById('assunto').value,
+                mensagem: document.getElementById('mensagem').value
+            };
+
+            const texto = `📩 *NOVA MENSAGEM DE CONTATO*\n\n` +
+                `*Nome:* ${dados.nome}\n` +
+                `*Email:* ${dados.email}\n` +
+                `*Telefone:* ${dados.telefone}\n` +
+                `*Assunto:* ${dados.assunto}\n\n` +
+                `*Mensagem:*\n${dados.mensagem}`;
+
+            const whatsapp = '5511987654321'; // Altere para seu número
+            window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(texto)}`, '_blank');
+
+            alert('Mensagem enviada! Em breve retornaremos seu contato.');
+            e.target.reset();
+        }
+    </script>
+</body>
+
+</html>

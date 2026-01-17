@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Novo Veículo - AutoCatalog Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    /* Estilos específicos do formulário */
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+      color: var(--gray-500);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary-blue);
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: var(--gray-500);
+      margin-bottom: 2rem;
+    }
+
+    .form-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* Upload Area */
+    .upload-area {
+      border: 2px dashed var(--gray-300);
+      border-radius: 0.75rem;
+      padding: 3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--gray-50);
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary-blue);
+      background: var(--primary-blue-light);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+
+    .upload-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--gray-900);
+    }
+
+    .upload-subtitle {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .btn-select-files {
+      margin-top: 1rem;
+      background: var(--primary-blue);
+      color: white;
+      padding: 0.625rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Preview de imagens */
+    .images-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .image-preview-item {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      background: var(--gray-100);
+    }
+
+    .image-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .remove-image {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 24px;
+      height: 24px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    /* Form Grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-family: var(--font-main);
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px var(--primary-blue-light);
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    /* Opcionais Grid */
+    .opcionais-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      font-size: 0.875rem;
+      color: var(--gray-700);
+      cursor: pointer;
+    }
+
+    /* Toolbar do editor */
+    .editor-toolbar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-300);
+      border-bottom: none;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .editor-btn {
+      width: 32px;
+      height: 32px;
+      background: white;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .editor-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .editor-textarea {
+      border-radius: 0 0 0.5rem 0.5rem;
+      border-top: none;
+    }
+
+    /* Footer Actions */
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+    }
+
+    .status-indicator {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      background: white;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--gray-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-100);
+    }
+
+    .btn-publish {
+      padding: 0.75rem 2rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-publish:hover {
+      background: var(--primary-blue-dark);
+    }
+
+    @media (max-width: 1024px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .opcionais-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .opcionais-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🚗</div>
+        <div class="sidebar-logo-text">
+          <h1>AutoManager</h1>
+          <p>Painel Admin</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="/admin/dashboard.html" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/dashboard.html" class="sidebar-menu-item active">
+          <span class="sidebar-menu-icon">📦</span>
+          <span>Estoque</span>
+        </a>
+        <a href="#vendas" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">🏷️</span>
+          <span>Vendas</span>
+        </a>
+        <a href="#relatorios" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">📈</span>
+          <span>Relatórios</span>
+        </a>
+        <a href="#configuracoes" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">⚙️</span>
+          <span>Configurações</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="window.location.href='/admin/dashboard.html'">
+          <span>←</span>
+          Voltar
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- HEADER -->
+      <header class="admin-header">
+        <div>
+          <div class="breadcrumb">
+            <a href="/admin/dashboard.html">Dashboard</a>
+            <span>/</span>
+            <a href="/admin/dashboard.html">Veículos</a>
+            <span>/</span>
+            <span id="breadcrumbTitle">Novo Veículo</span>
+          </div>
+          <h1 class="page-title" id="pageTitle">Cadastro de Novo Veículo</h1>
+          <p class="page-subtitle">Preencha as informações detalhadas para publicar o carro no seu catálogo digital.</p>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <div class="content-area">
+        <form id="vehicleForm" enctype="multipart/form-data">
+          <!-- FOTOS DO VEÍCULO -->
+          <div class="form-section">
+            <h2 class="section-title">Fotos do Veículo</h2>
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">☁️</div>
+              <div class="upload-title">Upload de Imagens</div>
+              <div class="upload-subtitle">Arraste as fotos aqui ou clique para selecionar múltiplas imagens (JPG, PNG).
+                Sugerimos ao menos 5 fotos de ângulos diferentes.</div>
+              <button type="button" class="btn-select-files">Selecionar Arquivos</button>
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" multiple style="display: none"
+              onchange="handleFileSelect(event)" />
+
+            <div class="images-preview" id="imagesPreview"></div>
+            <div id="existingImages"></div>
+          </div>
+
+          <!-- MÍDIA EXTERNA -->
+          <div class="form-section">
+            <h2 class="section-title">Mídia Externa</h2>
+            <div class="form-group full-width">
+              <label class="form-label">Link do Vídeo (YouTube)</label>
+              <input type="url" class="form-input" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+              <small style="color: var(--gray-500); font-size: 0.75rem;">
+                Cole o link do vídeo para usar um virtual tour clientes
+              </small>
+            </div>
+          </div>
+
+          <!-- INFORMAÇÕES GERAIS -->
+          <div class="form-section">
+            <h2 class="section-title">Informações Gerais</h2>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Marca *</label>
+                <select class="form-select" id="marca" required>
+                  <option value="">Selecione a Marca</option>
+                  <option value="Toyota">Toyota</option>
+                  <option value="Honda">Honda</option>
+                  <option value="Volkswagen">Volkswagen</option>
+                  <option value="Chevrolet">Chevrolet</option>
+                  <option value="Hyundai">Hyundai</option>
+                  <option value="Nissan">Nissan</option>
+                  <option value="Jeep">Jeep</option>
+                  <option value="Fiat">Fiat</option>
+                  <option value="Ford">Ford</option>
+                  <option value="Renault">Renault</option>
+                  <option value="Peugeot">Peugeot</option>
+                  <option value="Mitsubishi">Mitsubishi</option>
+                  <option value="Caoa Chery">Caoa Chery</option>
+                  <option value="Mini">Mini</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Modelo *</label>
+                <input type="text" class="form-input" id="modelo" placeholder="Ex: Corolla" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Versão</label>
+                <input type="text" class="form-input" id="versao" placeholder="Ex: XEi 2.0 Flex" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Ano (Fabricação/Modelo) *</label>
+                <input type="text" class="form-input" id="ano" placeholder="Ex: 2022/2023" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Quilometragem (KM) *</label>
+                <input type="number" class="form-input" id="km" placeholder="Ex: 15000" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Preço (R$) *</label>
+                <input type="number" class="form-input" id="preco" placeholder="Ex: 125.000,00" step="0.01" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Cor *</label>
+                <select class="form-select" id="cor" required>
+                  <option value="">Selecione a Cor</option>
+                  <option value="Branco">Branco</option>
+                  <option value="Preto">Preto</option>
+                  <option value="Prata">Prata</option>
+                  <option value="Cinza">Cinza</option>
+                  <option value="Vermelho">Vermelho</option>
+                  <option value="Azul">Azul</option>
+                  <option value="Verde">Verde</option>
+                  <option value="Amarelo">Amarelo</option>
+                  <option value="Marrom">Marrom</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Combustível *</label>
+                <select class="form-select" id="combustivel" required>
+                  <option value="">Selecione o Tipo</option>
+                  <option value="Flex">Flex</option>
+                  <option value="Gasolina">Gasolina</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Elétrico">Elétrico</option>
+                  <option value="Híbrido">Híbrido</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Câmbio *</label>
+                <select class="form-select" id="cambio" required>
+                  <option value="">Selecione</option>
+                  <option value="Manual">Manual</option>
+                  <option value="Automático">Automático</option>
+                  <option value="Automatizado">Automatizado</option>
+                  <option value="CVT">CVT</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- OPCIONAIS & EQUIPAMENTOS -->
+          <div class="form-section">
+            <h2 class="section-title">Opcionais & Equipamentos</h2>
+
+            <div class="opcionais-grid">
+              <div class="checkbox-item">
+                <input type="checkbox" id="ar" />
+                <label for="ar">Ar condicionado</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="direcao" />
+                <label for="direcao">Direção hidráulica</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="vidros" />
+                <label for="vidros">Vidros elétricos</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="trava" />
+                <label for="trava">Trava elétrica</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="airbag" />
+                <label for="airbag">Airbag duplo</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="freios" />
+                <label for="freios">Freios ABS</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="multimidia" />
+                <label for="multimidia">Central multimídia</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="camera" />
+                <label for="camera">Câmera de ré</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="bancos" />
+                <label for="bancos">Bancos de couro</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="teto" />
+                <label for="teto">Teto solar</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="rodas" />
+                <label for="rodas">Rodas de liga leve</label>
+              </div>
+              <div class="checkbox-item">
+                <input type="checkbox" id="farol" />
+                <label for="farol">Farol de milha</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- DESCRIÇÃO DETALHADA -->
+          <div class="form-section">
+            <h2 class="section-title">Descrição Detalhada</h2>
+
+            <div class="editor-toolbar">
+              <button type="button" class="editor-btn" title="Negrito">B</button>
+              <button type="button" class="editor-btn" title="Itálico"><i>I</i></button>
+              <button type="button" class="editor-btn" title="Lista">☰</button>
+              <button type="button" class="editor-btn" title="Link">🔗</button>
+            </div>
+
+            <textarea class="form-textarea editor-textarea" id="descricao"
+              placeholder="Descreva os diferenciais deste veículo, histórico de revisões, estado dos pneus, etc..."></textarea>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="form-footer">
+            <div class="status-indicator">
+              <strong>STATUS:</strong> <span id="statusText">Rascunho não salvo</span>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="salvarRascunho()">
+                Salvar Rascunho
+              </button>
+              <button type="submit" class="btn-publish">
+                Publicar Veículo
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const vehicleId = urlParams.get('id');
+    let selectedFiles = [];
+    let imagesToRemove = [];
+
+    // Atualizar título se estiver editando
+    if (vehicleId) {
+      document.getElementById('pageTitle').textContent = 'Editar Veículo';
+      document.getElementById('breadcrumbTitle').textContent = 'Editar';
+      carregarVeiculo(vehicleId);
+    }
+
+    // Handle file selection
+    function handleFileSelect(event) {
+      const files = Array.from(event.target.files);
+      selectedFiles = [...selectedFiles, ...files];
+      renderImagePreviews();
+    }
+
+    // Render image previews
+    function renderImagePreviews() {
+      const container = document.getElementById('imagesPreview');
+      container.innerHTML = '';
+
+      selectedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement('div');
+          div.className = 'image-preview-item';
+          div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button type="button" class="remove-image" onclick="removeFile(${index})">×</button>
+                    `;
+          container.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Remove file
+    function removeFile(index) {
+      selectedFiles.splice(index, 1);
+      renderImagePreviews();
+    }
+
+    // Carregar veículo para edição
+    async function carregarVeiculo(id) {
+      try {
+        const response = await fetch(`/api/vehicles/${id}`);
+        const vehicle = await response.json();
+
+        document.getElementById('marca').value = vehicle.marca || '';
+        document.getElementById('modelo').value = vehicle.modelo || '';
+        document.getElementById('versao').value = vehicle.versao || '';
+        document.getElementById('ano').value = vehicle.ano || '';
+        document.getElementById('km').value = vehicle.km || '';
+        document.getElementById('preco').value = vehicle.preco || '';
+        document.getElementById('cor').value = vehicle.cor || '';
+        document.getElementById('combustivel').value = vehicle.combustivel || '';
+        document.getElementById('cambio').value = vehicle.cambio || '';
+        document.getElementById('descricao').value = vehicle.descricao || '';
+
+        // Exibir imagens existentes
+        if (vehicle.images && vehicle.images.length > 0) {
+          const container = document.getElementById('existingImages');
+          container.innerHTML = '<div style="margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600;">Imagens Atuais:</div>';
+          const grid = document.createElement('div');
+          grid.className = 'images-preview';
+
+          vehicle.images.forEach((img, index) => {
+            const div = document.createElement('div');
+            div.className = 'image-preview-item';
+            div.innerHTML = `
+                            <img src="${img.image_path}" alt="Imagem ${index + 1}">
+                            <button type="button" class="remove-image" onclick="removeExistingImage(${img.id}, this)">×</button>
+                        `;
+            grid.appendChild(div);
+          });
+
+          container.appendChild(grid);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar veículo:', error);
+        alert('Erro ao carregar dados do veículo');
+      }
+    }
+
+    // Remove existing image
+    function removeExistingImage(imageId, button) {
+      imagesToRemove.push(imageId);
+      button.parentElement.remove();
+    }
+
+    // Salvar rascunho
+    function salvarRascunho() {
+      document.getElementById('statusText').textContent = 'Rascunho salvo';
+      alert('Rascunho salvo com sucesso!');
+    }
+
+    // Submit form
+    document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+
+      // Dados do veículo
+      formData.append('marca', document.getElementById('marca').value);
+      const modelo = document.getElementById('modelo').value;
+      const versao = document.getElementById('versao').value;
+      formData.append('modelo', versao ? `${modelo} ${versao}` : modelo);
+      formData.append('ano', document.getElementById('ano').value.split('/')[0]);
+      formData.append('km', document.getElementById('km').value);
+      formData.append('preco', document.getElementById('preco').value);
+      formData.append('cor', document.getElementById('cor').value);
+      formData.append('combustivel', document.getElementById('combustivel').value);
+      formData.append('cambio', document.getElementById('cambio').value);
+      formData.append('descricao', document.getElementById('descricao').value);
+      formData.append('destaque', 0);
+
+      // Imagens
+      selectedFiles.forEach(file => {
+        formData.append('images', file);
+      });
+
+      // Imagens para remover (se estiver editando)
+      if (imagesToRemove.length > 0) {
+        formData.append('removeImages', JSON.stringify(imagesToRemove));
+      }
+
+      try {
+        const url = vehicleId ? `/api/vehicles/${vehicleId}` : '/api/vehicles';
+        const method = vehicleId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+          method: method,
+          body: formData
+        });
+
+        if (response.ok) {
+          alert(vehicleId ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
+          window.location.href = 'dashboard.html';
+        } else {
+          alert('Erro ao salvar veículo');
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao salvar veículo');
+      }
+    });
+  </script>
+</body>
+
+</html>

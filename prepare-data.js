@@ -1,0 +1,355 @@
+const fs = require('fs');
+const path = require('path');
+
+// Lista completa de 25 veículos do mercado brasileiro
+const vehicles = [
+    {
+        id: 1,
+        marca: 'Toyota',
+        modelo: 'Corolla XEi',
+        ano: 2022,
+        km: 28500,
+        preco: 129900,
+        cor: 'Prata',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Toyota Corolla XEi 2022 em excelente estado. Único dono, revisões na concessionária. Central multimídia, câmera de ré, sensores, ar dual zone, bancos em couro, rodas 16". Aceito troca e financio.',
+        destaque: true
+    },
+    {
+        id: 2,
+        marca: 'Honda',
+        modelo: 'Civic EXL',
+        ano: 2021,
+        km: 35200,
+        preco: 139900,
+        cor: 'Preto',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Honda Civic EXL 2021 top de linha. Motor 2.0 155cv, bancos couro, teto solar, som premium 8 falantes, ACC, LED full, rodas 17", Android Auto/CarPlay. Revisado, pneus novos.',
+        destaque: true
+    },
+    {
+        id: 3,
+        marca: 'Hyundai',
+        modelo: 'HB20 Comfort',
+        ano: 2023,
+        km: 5800,
+        preco: 74900,
+        cor: 'Branco',
+        combustivel: 'Flex',
+        cambio: 'Manual',
+        descricao: 'HB20 Comfort 2023 praticamente zero! Motor 1.0 12V, ar-condicionado, direção elétrica, vidros e travas elétricas, central multimídia 8" com Bluelink. Garantia até 2028.',
+        destaque: false
+    },
+    {
+        id: 4,
+        marca: 'Volkswagen',
+        modelo: 'Nivus Highline',
+        ano: 2022,
+        km: 31200,
+        preco: 119900,
+        cor: 'Cinza',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'VW Nivus Highline 2022, o SUV cupê alemão. Motor 1.0 TSI 128cv, câmbio automático 6 marchas, central 10.1", Digital Cockpit, ar digital, cruise control, sensor chuva/crepuscular.',
+        destaque: false
+    },
+    {
+        id: 5,
+        marca: 'Fiat',
+        modelo: 'Argo Trekking',
+        ano: 2023,
+        km: 12400,
+        preco: 79900,
+        cor: 'Vermelho',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Fiat Argo Trekking 2023 aventureiro! Motor 1.3 Firefly 109cv, CVT, suspensão elevada, proteções de caçamba, rack teto, Uconnect 7", ar digital. Perfeito para trilhas urbanas.',
+        destaque: false
+    },
+    {
+        id: 6,
+        marca: 'Chevrolet',
+        modelo: 'Onix Plus Premier',
+        ano: 2023,
+        km: 8900,
+        preco: 89900,
+        cor: 'Branco',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Onix Plus Premier 2023 seminovo! Turbo 1.0 116cv, automático 6marchas, myLink2 8", Wi-Fi, carregamento wireless, ar digital, sensor chuva. Garantia até 2026.',
+        destaque: true
+    },
+    {
+        id: 7,
+        marca: 'Honda',
+        modelo: 'HR-V Touring',
+        ano: 2022,
+        km: 22100,
+        preco: 149900,
+        cor: 'Azul',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'HR-V Touring 2022 topo! Turbo 1.5 177cv, CVT, Honda Sensing completo, teto panorâmico, couro, ar dual, rodas 18", LEDs. Único dono, IPVA 2024 pago.',
+        destaque: true
+    },
+    {
+        id: 8,
+        marca: 'Jeep',
+        modelo: 'Compass Limited',
+        ano: 2021,
+        km: 41800,
+        preco: 159900,
+        cor: 'Cinza',
+        combustivel: 'Diesel',
+        cambio: 'Automático',
+        descricao: 'Compass Limited 2021 diesel. 2.0 turbo 170cv, 4x4 ativa, auto 9marchas, couro, teto solar, UConnect 8.4", wireless charging, keyless, bancos elétricos. Econômico e completo.',
+        destaque: false
+    },
+    {
+        id: 9,
+        marca: 'Jeep',
+        modelo: 'Renegade Sport',
+        ano: 2023,
+        km: 12400,
+        preco: 119900,
+        cor: 'Laranja',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Renegade Sport 2023 Volcano Orange! 1.8 Flex 139cv, auto 6marchas, ar, elétricos, Uconnect 7", rodas 16". Garantia até 2026. Parcelas R$ 1.899!',
+        destaque: false
+    },
+    {
+        id: 10,
+        marca: 'Nissan',
+        modelo: 'Kicks SV',
+        ano: 2022,
+        km: 31500,
+        preco: 109900,
+        cor: 'Vermelho',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Kicks SV 2022 completo. 1.6 114cv CVT, 15.2km/l, ar digital, multimídia Android Auto/CarPlay, câmera 360°, freio estacionamento eletrônico. Revisões em dia.',
+        destaque: false
+    },
+    {
+        id: 11,
+        marca: 'Hyundai',
+        modelo: 'Creta Prestige',
+        ano: 2023,
+        km: 15200,
+        preco: 144900,
+        cor: 'Branco',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Creta Prestige 2023 top! 2.0 167cv, auto 6marchas, couro, teto panorâmico, wireless charging, display 10.25", Bose premium, LED full, rodas 18". Garantia 5 anos.',
+        destaque: true
+    },
+    {
+        id: 12,
+        marca: 'Volkswagen',
+        modelo: 'T-Cross Highline',
+        ano: 2022,
+        km: 27800,
+        preco: 124900,
+        cor: 'Cinza',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'T-Cross Highline 2022. TSI 1.4 turbo 150cv, Tiptronic 6m, Composition 10.1", Digital Cockpit, ar dual, ACC, sensores. Revisões VW, impecável.',
+        destaque: false
+    },
+    {
+        id: 13,
+        marca: 'Fiat',
+        modelo: 'Pulse Abarth',
+        ano: 2023,
+        km: 6500,
+        preco: 134900,
+        cor: 'Preto',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Pulse Abarth 2023 esportivo! Turbo 1.3 185cv, 0-100 em 7.4s, CVT, modo Sport, paddle shifts, suspensão sport, bancos Abarth, JBL, teto. Preto c/ vermelho.',
+        destaque: true
+    },
+    {
+        id: 14,
+        marca: 'Toyota',
+        modelo: 'Hilux SRX 4x4',
+        ano: 2022,
+        km: 38500,
+        preco: 289900,
+        cor: 'Branco',
+        combustivel: 'Diesel',
+        cambio: 'Automático',
+        descricao: 'Hilux SRX 2022 diesel! 2.8 turbo 204cv, 4x4 reduzida, auto 6m, cabine dupla, couro, ar dual, central 8", câmera 360°, sensores. A mais vendida do Brasil!',
+        destaque: true
+    },
+    {
+        id: 15,
+        marca: 'Ford',
+        modelo: 'Ranger XLT 4x4',
+        ano: 2021,
+        km: 52100,
+        preco: 239900,
+        cor: 'Prata',
+        combustivel: 'Diesel',
+        cambio: 'Automático',
+        descricao: 'Ranger XLT 2021 diesel robusta. 2.2 turbo 160cv, 4x4, SelectShift 6m, cabine dupla, ar, SYNC3 8", câmera, controles estabilidade/tração, rodas 17".',
+        destaque: false
+    },
+    {
+        id: 16,
+        marca: 'Volkswagen',
+        modelo: 'Polo Highline',
+        ano: 2023,
+        km: 9200,
+        preco: 94900,
+        cor: 'Azul',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Polo Highline 2023 zero! TSI 1.0 turbo 128cv, auto 6m, central 10.1" wireless Android/Apple, ar digital, volante couro, LED full, rodas 16". Garantia 2026.',
+        destaque: false
+    },
+    {
+        id: 17,
+        marca: 'Hyundai',
+        modelo: 'HB20S Diamond Plus',
+        ano: 2023,
+        km: 11800,
+        preco: 89900,
+        cor: 'Preto',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'HB20S Diamond Plus 2023! Turbo 1.0 120cv, auto 6m, central 8" Bluelink, ar digital, couro Diamond, rodas 16" exclusivas, wireless. Som 6 falantes. Garantia 2028!',
+        destaque: false
+    },
+    {
+        id: 18,
+        marca: 'Chevrolet',
+        modelo: 'Tracker Premier',
+        ano: 2022,
+        km: 24600,
+        preco: 139900,
+        cor: 'Vermelho',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Tracker Premier 2022 top! Turbo 1.2 133cv, auto 6m, teto panorâmico, couro, wireless, mylink2 10.25", OnStar Wi-Fi 4G, ar dual, LED, rodas 17". Único dono.',
+        destaque: true
+    },
+    {
+        id: 19,
+        marca: 'Chevrolet',
+        modelo: 'S10 High Country',
+        ano: 2022,
+        km: 44300,
+        preco: 259900,
+        cor: 'Preto',
+        combustivel: 'Diesel',
+        cambio: 'Automático',
+        descricao: 'S10 High Country 2022 premium! 2.8 diesel 200cv, 4x4, auto, cabine dupla, couro, mylink 8", câmera, sensor, rodas 18" cromadas. Picape de luxo!',
+        destaque: false
+    },
+    {
+        id: 20,
+        marca: 'Renault',
+        modelo: 'Kwid Intense',
+        ano: 2023,
+        km: 7200,
+        preco: 64900,
+        cor: 'Laranja',
+        combustivel: 'Flex',
+        cambio: 'Manual',
+        descricao: 'Kwid Intense 2023 econômico! 1.0 SCe 70cv, ar, direção elétrica, vidros/travas, Media Evolution 8" com câmera de ré. Consumo 15km/l. Ideal para cidade!',
+        destaque: false
+    },
+    {
+        id: 21,
+        marca: 'Peugeot',
+        modelo: '2008 Griffe',
+        ano: 2022,
+        km: 28900,
+        preco: 114900,
+        cor: 'Branco',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: '2008 Griffe 2022 francês! 1.6 AT6, i-Cockpit 3D 10", teto panorâmico, couro, controle voz, Park Assist, grip control. Design único e tecnologia.',
+        destaque: false
+    },
+    {
+        id: 22,
+        marca: 'Mitsubishi',
+        modelo: 'L200 Triton Sport',
+        ano: 2021,
+        km: 56700,
+        preco: 229900,
+        cor: 'Cinza',
+        combustivel: 'Diesel',
+        cambio: 'Automático',
+        descricao: 'L200 Triton Sport 2021 robusta! 2.4 diesel turbo 190cv, 4x4, auto, cabine dupla, couro, central 7", câmera, sensores. Capacidade de carga 1 tonelada!',
+        destaque: false
+    },
+    {
+        id: 23,
+        marca: 'Nissan',
+        modelo: 'Versa Exclusive',
+        ano: 2022,
+        km: 33400,
+        preco: 99900,
+        cor: 'Prata',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Versa Exclusive 2022 sedã espaçoso! 1.6 CVT, porta-malas 465L, ar digital, central 8" Android/Apple, câmera, sensores, volante couro. Conforto e economia.',
+        destaque: false
+    },
+    {
+        id: 24,
+        marca: 'Volkswagen',
+        modelo: 'Taos Highline',
+        ano: 2023,
+        km: 18200,
+        preco: 179900,
+        cor: 'Cinza',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Taos Highline 2023 SUV premium VW! TSI 1.4 turbo 150cv, auto, teto panorâmico, couro, Digital Cockpit, central 10.1", Park Assist, rodas 18". Top de linha!',
+        destaque: true
+    },
+    {
+        id: 25,
+        marca: 'Caoa Chery',
+        modelo: 'Tiggo 7 Sport',
+        ano: 2022,
+        km: 25600,
+        preco: 134900,
+        cor: 'Azul',
+        combustivel: 'Flex',
+        cambio: 'Automático',
+        descricao: 'Tiggo 7 Sport 2022 custo-benefício! Turbo 1.5 152cv, auto, teto solar, couro, central 10.25", 360°, LED, cruise adaptativo. Garantia 5 anos ou 150mil km!',
+        destaque: false
+    }
+];
+
+// Ângulos de fotos para cada carro
+const angles = [
+    'front_quarter',    // Frente 3/4
+    'side',            // Lateral
+    'rear_quarter',    // Traseira 3/4
+    'front',           // Frente
+    'rear',            // Traseira
+    'interior_dash',   // Painel/interior
+    'interior_seats',  // Bancos
+    'trunk',           // Porta-malas
+    'wheels',          // Rodas/detalhes
+    'console'          // Console/câmbio
+];
+
+// Salvar em JSON para referência
+fs.writeFileSync(
+    path.join(__dirname, 'vehicles-data.json'),
+    JSON.stringify({ vehicles, angles }, null, 2)
+);
+
+console.log(`✅ Dados de ${vehicles.length} veículos salvos em vehicles-data.json`);
+console.log(`📸 Cada veículo terá ${angles.length} fotos de diferentes ângulos`);
+console.log(`📊 Total de fotos a gerar: ${vehicles.length * angles.length} fotos\n`);

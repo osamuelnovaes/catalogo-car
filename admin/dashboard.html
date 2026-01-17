@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoManager - Painel de Estoque</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🚗</div>
+        <div class="sidebar-logo-text">
+          <h1>AutoManager</h1>
+          <p>Painel Admin</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="/admin/dashboard.html" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/dashboard.html" class="sidebar-menu-item active">
+          <span class="sidebar-menu-icon">📦</span>
+          <span>Estoque</span>
+        </a>
+        <a href="#vendas" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">🏷️</span>
+          <span>Vendas</span>
+        </a>
+        <a href="#relatorios" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">📈</span>
+          <span>Relatórios</span>
+        </a>
+        <a href="#configuracoes" class="sidebar-menu-item">
+          <span class="sidebar-menu-icon">⚙️</span>
+          <span>Configurações</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+          <span>🚪</span>
+          Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- HEADER -->
+      <header class="admin-header">
+        <h1 class="admin-header-title">Painel de Estoque</h1>
+
+        <div class="admin-header-actions">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchVehicles"
+              placeholder="Buscar por modelo, placa ou marca..." />
+          </div>
+
+          <button class="btn-add" onclick="window.location.href='vehicle-form.html'">
+            <span>+</span>
+            Adicionar Novo Carro
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <div class="content-area">
+        <!-- STATS CARDS -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Total de Veículos</div>
+              <div class="stat-value" id="totalVehicles">0</div>
+              <span class="stat-change positive" id="vehiclesChange">+2%</span>
+            </div>
+            <div class="stat-icon blue">
+              🚗
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Valor em Estoque</div>
+              <div class="stat-value" id="totalValue">R$ 0</div>
+              <span class="stat-change positive" id="valueChange">+5%</span>
+            </div>
+            <div class="stat-icon green">
+              💰
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Vendas no Mês</div>
+              <div class="stat-value" id="monthSales">0</div>
+              <span class="stat-change negative" id="salesChange">-1%</span>
+            </div>
+            <div class="stat-icon orange">
+              📊
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTER TABS -->
+        <div class="filter-tabs">
+          <div class="tabs">
+            <button class="tab active" data-status="todos" onclick="filterByStatus('todos')">Todos</button>
+            <button class="tab" data-status="disponivel" onclick="filterByStatus('disponivel')">Disponível</button>
+            <button class="tab" data-status="vendido" onclick="filterByStatus('vendido')">Vendido</button>
+            <button class="tab" data-status="reservado" onclick="filterByStatus('reservado')">Reservado</button>
+          </div>
+
+          <div class="showing-text" id="showingText">Exibindo 0 de 0 veículos</div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>FOTO</th>
+                <th>MODELO/MARCA</th>
+                <th>PLACA</th>
+                <th>PREÇO</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="vehiclesTable">
+              <!-- Linhas serão inseridas via JavaScript -->
+            </tbody>
+          </table>
+
+          <div class="table-footer">
+            <div class="pagination-info" id="paginationInfo">Página 1 de 1</div>
+            <div class="pagination-buttons">
+              <button class="pagination-btn" id="prevBtn" onclick="previousPage()">Anterior</button>
+              <button class="pagination-btn" id="nextBtn" onclick="nextPage()">Próxima</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let allVehicles = [];
+    let filteredVehicles = [];
+    let currentStatus = 'todos';
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    // Carregar ao iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+      verificarAutenticacao();
+      carregarVeiculos();
+    });
+
+    // Verificar autenticação
+    async function verificarAutenticacao() {
+      try {
+        const response = await fetch('/api/auth/check');
+        const data = await response.json();
+
+        if (!data.authenticated) {
+          window.location.href = 'login.html';
+        }
+      } catch (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        window.location.href = 'login.html';
+      }
+    }
+
+    // Carregar veículos
+    async function carregarVeiculos() {
+      try {
+        const response = await fetch('/api/vehicles');
+        allVehicles = await response.json();
+        filteredVehicles = [...allVehicles];
+
+        atualizarEstatisticas();
+        renderizarTabela();
+      } catch (error) {
+        console.error('Erro ao carregar veículos:', error);
+      }
+    }
+
+    // Atualizar estatísticas
+    function atualizarEstatisticas() {
+      const total = allVehicles.length;
+      const valorTotal = allVehicles.reduce((sum, v) => sum + (v.preco || 0), 0);
+      const vendas = allVehicles.filter(v => v.status === 'vendido').length;
+
+      document.getElementById('totalVehicles').textContent = total;
+      document.getElementById('totalValue').textContent = `R$ ${valorTotal.toLocaleString('pt-BR')}`;
+      document.getElementById('monthSales').textContent = vendas;
+    }
+
+    // Filtrar por status
+    function filterByStatus(status) {
+      currentStatus = status;
+      currentPage = 1;
+
+      // Atualizar tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Filtrar
+      if (status === 'todos') {
+        filteredVehicles = [...allVehicles];
+      } else {
+        filteredVehicles = allVehicles.filter(v => (v.status || 'disponivel') === status);
+      }
+
+      renderizarTabela();
+    }
+
+    // Renderizar tabela
+    function renderizarTabela() {
+      const tbody = document.getElementById('vehiclesTable');
+      tbody.innerHTML = '';
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedVehicles = filteredVehicles.slice(startIndex, endIndex);
+
+      paginatedVehicles.forEach(vehicle => {
+        const row = criarLinhaTabela(vehicle);
+        tbody.appendChild(row);
+      });
+
+      atualizarPaginacao();
+    }
+
+    // Criar linha da tabela
+    function criarLinhaTabela(vehicle) {
+      const tr = document.createElement('tr');
+
+      const imagemPrincipal = vehicle.images && vehicle.images.length > 0
+        ? vehicle.images[0].image_path
+        : '/placeholder.png';
+
+      const status = vehicle.status || 'disponivel';
+      const placa = vehicle.placa || 'ABC-1234';
+
+      tr.innerHTML = `
+                <td>
+                    <div class="vehicle-cell">
+                        <img src="${imagemPrincipal}" alt="${vehicle.marca} ${vehicle.modelo}" class="vehicle-thumb">
+                    </div>
+                </td>
+                <td>
+                    <div class="vehicle-info-table">
+                        <div class="vehicle-name">${vehicle.marca} ${vehicle.modelo} ${vehicle.ano}</div>
+                        <div class="vehicle-specs-table">${vehicle.cambio} • ${vehicle.combustivel}</div>
+                    </div>
+                </td>
+                <td>${placa}</td>
+                <td class="price">R$ ${(vehicle.preco || 0).toLocaleString('pt-BR')}</td>
+                <td>
+                    <span class="badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <button class="btn-icon edit" onclick="editarVeiculo(${vehicle.id})" title="Editar">
+                            ✏️
+                        </button>
+                        <button class="btn-icon delete" onclick="confirmarExclusao(${vehicle.id})" title="Excluir">
+                            🗑️
+                        </button>
+                    </div>
+                </td>
+            `;
+
+      return tr;
+    }
+
+    // Atualizar paginação
+    function atualizarPaginacao() {
+      const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+
+      document.getElementById('showingText').textContent =
+        `Exibindo ${filteredVehicles.length} de ${allVehicles.length} veículos`;
+
+      document.getElementById('paginationInfo').textContent =
+        `Página ${currentPage} de ${totalPages || 1}`;
+
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+    }
+
+    // Navegação de páginas
+    function previousPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderizarTabela();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderizarTabela();
+      }
+    }
+
+    // Editar veículo
+    function editarVeiculo(id) {
+      window.location.href = `vehicle-form.html?id=${id}`;
+    }
+
+    // Confirmar exclusão
+    function confirmarExclusao(id) {
+      if (confirm('Tem certeza que deseja excluir este veículo?')) {
+        excluirVeiculo(id);
+      }
+    }
+
+    // Excluir veículo
+    async function excluirVeiculo(id) {
+      try {
+        const response = await fetch(`/api/vehicles/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Veículo excluído com sucesso!');
+          carregarVeiculos();
+        } else {
+          alert('Erro ao excluir veículo');
+        }
+      } catch (error) {
+        console.error('Erro ao excluir veículo:', error);
+        alert('Erro ao excluir veículo');
+      }
+    }
+
+    // Logout
+    async function logout() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+      }
+    }
+
+    // Busca em tempo real
+    document.getElementById('searchVehicles').addEventListener('input', (e) => {
+      const search = e.target.value.toLowerCase();
+
+      filteredVehicles = allVehicles.filter(v =>
+        v.marca.toLowerCase().includes(search) ||
+        v.modelo.toLowerCase().includes(search) ||
+        v.ano.toString().includes(search)
+      );
+
+      if (currentStatus !== 'todos') {
+        filteredVehicles = filteredVehicles.filter(v => (v.status || 'disponivel') === currentStatus);
+      }
+
+      currentPage = 1;
+      renderizarTabela();
+    });
+  </script>
+</body>
+
+</html>

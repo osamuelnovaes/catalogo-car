@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas - AutoManager</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">🚗</div>
+                <div class="sidebar-logo-text">
+                    <h1>AutoManager</h1>
+                    <p>Painel Admin</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📦</span>
+                    <span>Estoque</span>
+                </a>
+                <a href="vendas.html" class="sidebar-menu-item active">
+                    <span class="sidebar-menu-icon">🏷️</span>
+                    <span>Vendas</span>
+                </a>
+                <a href="relatorios.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📈</span>
+                    <span>Relatórios</span>
+                </a>
+                <a href="configuracoes.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">⚙️</span>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="admin-header">
+                <h1 class="admin-header-title">Gestão de Vendas</h1>
+
+                <div class="admin-header-actions">
+                    <button class="btn-add" onclick="novaVenda()">
+                        <span>+</span>
+                        Nova Venda
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT AREA -->
+            <div class="content-area">
+                <!-- STATS CARDS -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Vendas Este Mês</div>
+                            <div class="stat-value">0</div>
+                            <span class="stat-change negative">-100%</span>
+                        </div>
+                        <div class="stat-icon orange">
+                            📊
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Receita do Mês</div>
+                            <div class="stat-value">R$ 0</div>
+                            <span class="stat-change negative">-100%</span>
+                        </div>
+                        <div class="stat-icon green">
+                            💰
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Ticket Médio</div>
+                            <div class="stat-value">R$ 0</div>
+                            <span class="stat-change">-</span>
+                        </div>
+                        <div class="stat-icon blue">
+                            📈
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILTER TABS -->
+                <div class="filter-tabs">
+                    <div class="tabs">
+                        <button class="tab active">Todos</button>
+                        <button class="tab">Concluídas</button>
+                        <button class="tab">Pendentes</button>
+                        <button class="tab">Canceladas</button>
+                    </div>
+
+                    <div class="showing-text">Exibindo 0 de 0 vendas</div>
+                </div>
+
+                <!-- EMPTY STATE -->
+                <div class="no-results" style="display: block;">
+                    <div class="no-results-icon">💼</div>
+                    <h3 class="no-results-title">Nenhuma venda registrada</h3>
+                    <p class="no-results-text">Quando você realizar uma venda, ela aparecerá aqui com todos os detalhes.
+                    </p>
+                    <button class="btn-primary" onclick="novaVenda()" style="margin-top: 1rem;">Registrar Primeira
+                        Venda</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function novaVenda() {
+            alert('Funcionalidade de registro de vendas em desenvolvimento!\n\nEm breve você poderá:\n• Registrar vendas\n• Emitir contratos\n• Gerenciar propostas\n• Acompanhar comissões');
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - AutoManager</title>
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .chart-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: var(--gray-50);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: 3rem;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">🚗</div>
+                <div class="sidebar-logo-text">
+                    <h1>AutoManager</h1>
+                    <p>Painel Admin</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📦</span>
+                    <span>Estoque</span>
+                </a>
+                <a href="vendas.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">🏷️</span>
+                    <span>Vendas</span>
+                </a>
+                <a href="relatorios.html" class="sidebar-menu-item active">
+                    <span class="sidebar-menu-icon">📈</span>
+                    <span>Relatórios</span>
+                </a>
+                <a href="configuracoes.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">⚙️</span>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="admin-header">
+                <h1 class="admin-header-title">Relatórios e Análises</h1>
+
+                <div class="admin-header-actions">
+                    <button class="btn-add" onclick="exportarRelatorio()">
+                        <span>📥</span>
+                        Exportar PDF
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT AREA -->
+            <div class="content-area">
+                <!-- STATS CARDS -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Total de Veículos</div>
+                            <div class="stat-value" id="totalVehicles">35</div>
+                            <span class="stat-change positive">+2%</span>
+                        </div>
+                        <div class="stat-icon blue">
+                            🚗
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Valor Total em Estoque</div>
+                            <div class="stat-value">R$ 5.411.500</div>
+                            <span class="stat-change positive">+5%</span>
+                        </div>
+                        <div class="stat-icon green">
+                            💰
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-label">Taxa de Conversão</div>
+                            <div class="stat-value">0%</div>
+                            <span class="stat-change">-</span>
+                        </div>
+                        <div class="stat-icon orange">
+                            📊
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS -->
+                <div class="reports-grid">
+                    <!-- Vendas por Mês -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Vendas por Mês</h2>
+                            <select class="chart-select">
+                                <option>Últimos 6 meses</option>
+                                <option>Últimos 12 meses</option>
+                                <option>Este ano</option>
+                            </select>
+                        </div>
+                        <div class="chart-placeholder">📊</div>
+                    </div>
+
+                    <!-- Veículos por Marca -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Estoque por Marca</h2>
+                            <select class="chart-select">
+                                <option>Quantidade</option>
+                                <option>Valor</option>
+                            </select>
+                        </div>
+                        <div class="chart-placeholder">📈</div>
+                    </div>
+
+                    <!-- Faixa de Preço -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Distribuição por Preço</h2>
+                        </div>
+                        <div class="chart-placeholder">📉</div>
+                    </div>
+
+                    <!-- Idade dos Veículos -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Veículos por Ano</h2>
+                        </div>
+                        <div class="chart-placeholder">📊</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function exportarRelatorio() {
+            alert('Exportação de relatórios em desenvolvimento!\n\nEm breve você poderá:\n• Exportar em PDF\n• Exportar em Excel\n• Gerar relatórios personalizados\n• Agendar envios automáticos');
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>

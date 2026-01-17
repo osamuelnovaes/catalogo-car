@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financiamento - AutoCatálogo</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-hero p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .page-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .finance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .finance-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .finance-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .benefits-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        .simulator-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .simulator-result {
+            background: var(--primary-blue-light);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .simulator-result h3 {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .finance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>AutoCatálogo</span>
+            </a>
+
+            <nav class="header-nav">
+                <a href="/">Estoque</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="vender.html">Vender Carro</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+
+            <div class="header-search">
+                <a href="/" class="btn-primary">Ver Catálogo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <h1>💳 Financiamento de Veículos</h1>
+        <p>Realize o sonho do carro próprio com as melhores taxas do mercado</p>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="page-container">
+        <!-- Benefits Grid -->
+        <div class="finance-grid">
+            <div class="finance-card">
+                <h2>💰 Vantagens do Nosso Financiamento</h2>
+                <ul class="benefits-list">
+                    <li>✅ Taxas competitivas a partir de 0,99% ao mês</li>
+                    <li>✅ Aprovação em até 24 horas</li>
+                    <li>✅ Parcelas que cabem no seu bolso</li>
+                    <li>✅ Entrada facilitada</li>
+                    <li>✅ Até 60 meses para pagar</li>
+                    <li>✅ Sem burocracia</li>
+                </ul>
+            </div>
+
+            <div class="finance-card">
+                <h2>📋 Documentos Necessários</h2>
+                <ul class="benefits-list">
+                    <li>📄 RG e CPF</li>
+                    <li>📄 Comprovante de residência</li>
+                    <li>📄 Comprovante de renda</li>
+                    <li>📄 Certidão de casamento (se casado)</li>
+                    <li>📄 CNH (Carteira de Habilitação)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Simulator -->
+        <div class="simulator-form">
+            <h2 style="margin-bottom: 1.5rem;">🧮 Simulador de Financiamento</h2>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="filter-label">Valor do Veículo</label>
+                    <input type="number" id="valorVeiculo" placeholder="R$ 50.000" value="50000"
+                        oninput="calcularParcela()" />
+                </div>
+
+                <div class="form-group">
+                    <label class="filter-label">Entrada (R$)</label>
+                    <input type="number" id="entrada" placeholder="R$ 10.000" value="10000"
+                        oninput="calcularParcela()" />
+                </div>
+
+                <div class="form-group">
+                    <label class="filter-label">Número de Parcelas</label>
+                    <select id="parcelas" onchange="calcularParcela()">
+                        <option value="12">12 meses</option>
+                        <option value="24">24 meses</option>
+                        <option value="36" selected>36 meses</option>
+                        <option value="48">48 meses</option>
+                        <option value="60">60 meses</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="simulator-result" id="resultado">
+                <h3 id="valorParcela">R$ 0,00</h3>
+                <p>Valor aproximado da parcela mensal</p>
+                <small style="color: var(--gray-500); display: block; margin-top: 1rem;">
+                    *Simulação com taxa de 1,5% ao mês. Valores sujeitos a aprovação de crédito.
+                </small>
+            </div>
+
+            <button class="btn-apply-filters" style="margin-top: 2rem;" onclick="solicitarProposta()">
+                Solicitar Proposta pelo WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function calcularParcela() {
+            const valorVeiculo = parseFloat(document.getElementById('valorVeiculo').value) || 0;
+            const entrada = parseFloat(document.getElementById('entrada').value) || 0;
+            const parcelas = parseInt(document.getElementById('parcelas').value);
+
+            const valorFinanciado = valorVeiculo - entrada;
+            const taxa = 0.015; // 1.5% ao mês
+
+            // Fórmula Price
+            const parcela = valorFinanciado * (taxa * Math.pow(1 + taxa, parcelas)) / (Math.pow(1 + taxa, parcelas) - 1);
+
+            document.getElementById('valorParcela').textContent =
+                `R$ ${parcela.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        function solicitarProposta() {
+            const valorVeiculo = document.getElementById('valorVeiculo').value;
+            const entrada = document.getElementById('entrada').value;
+            const parcelas = document.getElementById('parcelas').value;
+            const valorParcela = document.getElementById('valorParcela').textContent;
+
+            const mensagem = `Olá! Gostaria de fazer uma simulação de financiamento:\n\nValor do Veículo: R$ ${parseFloat(valorVeiculo).toLocaleString('pt-BR')}\nEntrada: R$ ${parseFloat(entrada).toLocaleString('pt-BR')}\nParcelas: ${parcelas}x\nValor da Parcela: ${valorParcela}`;
+
+            const whatsapp = '5511987654321'; // Altere para seu número
+            window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        // Calcular ao carregar
+        calcularParcela();
+    </script>
+</body>
+
+</html>

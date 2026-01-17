@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - AutoManager</title>
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .settings-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-info p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: var(--primary-blue);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .form-group-settings {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-settings label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-group-settings input,
+        .form-group-settings select,
+        .form-group-settings textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">🚗</div>
+                <div class="sidebar-logo-text">
+                    <h1>AutoManager</h1>
+                    <p>Painel Admin</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dashboard.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📦</span>
+                    <span>Estoque</span>
+                </a>
+                <a href="vendas.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">🏷️</span>
+                    <span>Vendas</span>
+                </a>
+                <a href="relatorios.html" class="sidebar-menu-item">
+                    <span class="sidebar-menu-icon">📈</span>
+                    <span>Relatórios</span>
+                </a>
+                <a href="configuracoes.html" class="sidebar-menu-item active">
+                    <span class="sidebar-menu-icon">⚙️</span>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="admin-header">
+                <h1 class="admin-header-title">Configurações do Sistema</h1>
+
+                <div class="admin-header-actions">
+                    <button class="btn-add" onclick="salvarConfiguracoes()">
+                        <span>💾</span>
+                        Salvar Alterações
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT AREA -->
+            <div class="content-area">
+                <!-- Informações da Loja -->
+                <div class="settings-section">
+                    <h2 class="settings-section-title">Informações da Concessionária</h2>
+
+                    <div class="form-group-settings">
+                        <label>Nome da Loja</label>
+                        <input type="text" value="AutoCatálogo" />
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>WhatsApp para Contato</label>
+                        <input type="tel" value="(11) 98765-4321" placeholder="(00) 00000-0000" />
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>Email</label>
+                        <input type="email" value="contato@autocatalogo.com.br" />
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>Endereço Completo</label>
+                        <textarea rows="3">Av. Paulista, 1000 - São Paulo, SP - CEP 01310-100</textarea>
+                    </div>
+                </div>
+
+                <!-- Preferências do Sistema -->
+                <div class="settings-section">
+                    <h2 class="settings-section-title">Preferências do Sistema</h2>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Modo Escuro</h3>
+                            <p>Ativar tema escuro no painel administrativo</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Notificações por Email</h3>
+                            <p>Receber alertas de novos contatos e propostas</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Aprovação Manual de Veículos</h3>
+                            <p>Veículos cadastrados precisam de aprovação para aparecer no catálogo</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- SEO e Marketing -->
+                <div class="settings-section">
+                    <h2 class="settings-section-title">SEO e Marketing</h2>
+
+                    <div class="form-group-settings">
+                        <label>Título do Site (Meta Title)</label>
+                        <input type="text" value="AutoCatálogo - Carros Novos e Seminovos" />
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>Descrição do Site (Meta Description)</label>
+                        <textarea
+                            rows="2">Encontre o carro ideal com as melhores condições. Carros novos e seminovos com garantia e procedência.</textarea>
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>Link do Facebook</label>
+                        <input type="url" placeholder="https://facebook.com/sua-pagina" />
+                    </div>
+
+                    <div class="form-group-settings">
+                        <label>Link do Instagram</label>
+                        <input type="url" placeholder="https://instagram.com/seu-perfil" />
+                    </div>
+                </div>
+
+                <!-- Segurança -->
+                <div class="settings-section">
+                    <h2 class="settings-section-title">Segurança</h2>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Autenticação de Dois Fatores (2FA)</h3>
+                            <p>Adicionar camada extra de segurança ao login</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group-settings" style="margin-top: 1rem;">
+                        <button class="btn-secondary" style="width: auto;" onclick="alterarSenha()">
+                            🔒 Alterar Senha
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function salvarConfiguracoes() {
+            alert('Configurações salvas com sucesso!');
+        }
+
+        function alterarSenha() {
+            alert('Funcionalidade de alteração de senha em desenvolvimento!');
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>

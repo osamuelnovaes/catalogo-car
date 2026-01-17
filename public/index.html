@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCatálogo - Catálogo de Carros Online</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>AutoCatálogo</span>
+            </a>
+
+            <nav class="header-nav">
+                <a href="/">Estoque</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="vender.html">Vender Carro</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+
+            <div class="header-search">
+                <input type="text" class="search-input" id="globalSearch"
+                    placeholder="Busque por marca, modelo ou ano..." />
+                <button class="btn-primary">Entrar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- SIDEBAR DE FILTROS -->
+        <aside class="filters-sidebar">
+            <h2 class="filters-title">Filtros</h2>
+            <p class="filters-subtitle">Refine sua busca por veículos</p>
+
+            <!-- Filtro Marca -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">🏢</span>
+                    Marca
+                </label>
+                <select id="filtroMarca">
+                    <option value="">Todas as marcas</option>
+                </select>
+            </div>
+
+            <!-- Filtro Ano -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">📅</span>
+                    Ano
+                </label>
+                <div class="price-range">
+                    <input type="number" id="anoMin" placeholder="De" min="1990" max="2024">
+                    <input type="number" id="anoMax" placeholder="Até" min="1990" max="2024">
+                </div>
+            </div>
+
+            <!-- Filtro Preço -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">💰</span>
+                    Faixa de Preço
+                </label>
+                <div class="price-range">
+                    <input type="number" id="precoMin" placeholder="R$ Mín" step="1000">
+                    <input type="number" id="precoMax" placeholder="R$ Máx" step="1000">
+                </div>
+            </div>
+
+            <!-- Filtro Quilometragem -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">🛣️</span>
+                    Quilometragem
+                </label>
+                <select id="filtroKm">
+                    <option value="">Qualquer</option>
+                    <option value="10000">Até 10.000 km</option>
+                    <option value="30000">Até 30.000 km</option>
+                    <option value="50000">Até 50.000 km</option>
+                    <option value="100000">Até 100.000 km</option>
+                </select>
+            </div>
+
+            <!-- Filtro Combustível -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">⛽</span>
+                    Combustível
+                </label>
+                <select id="filtroCombustivel">
+                    <option value="">Todos</option>
+                    <option value="Flex">Flex</option>
+                    <option value="Gasolina">Gasolina</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Elétrico">Elétrico</option>
+                    <option value="Híbrido">Híbrido</option>
+                </select>
+            </div>
+
+            <!-- Filtro Câmbio -->
+            <div class="filter-group">
+                <label class="filter-label">
+                    <span class="filter-icon">⚙️</span>
+                    Câmbio
+                </label>
+                <select id="filtroCambio">
+                    <option value="">Todos</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Automático">Automático</option>
+                </select>
+            </div>
+
+            <button class="btn-apply-filters" onclick="aplicarFiltros()">Aplicar Filtros</button>
+            <button class="btn-clear-filters" onclick="limparFiltros()">Limpar Filtros</button>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="content-area">
+            <!-- TABS DE CATEGORIAS -->
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="todos">
+                    🚗 Todos
+                </button>
+                <button class="category-tab" data-category="sedan">
+                    🚙 Sedans
+                </button>
+                <button class="category-tab" data-category="suv">
+                    🚘 SUVs
+                </button>
+                <button class="category-tab" data-category="pickup">
+                    🛻 Picapes
+                </button>
+                <button class="category-tab" data-category="hatch">
+                    🚗 Hatches
+                </button>
+            </div>
+
+            <!-- HEADER DOS VEÍCULOS -->
+            <div class="vehicles-header">
+                <div>
+                    <div class="vehicles-count" id="vehicleCount">Carregando...</div>
+                    <div class="vehicles-subtitle">Mostrando <span id="showingCount">0</span> de <span
+                            id="totalCount">0</span> carros encontrados</div>
+                </div>
+                <select class="sort-select" id="ordenacao">
+                    <option value="destaque">Ordenar por: Destaques</option>
+                    <option value="preco_asc">Menor Preço</option>
+                    <option value="preco_desc">Maior Preço</option>
+                    <option value="ano_desc">Mais Novos</option>
+                    <option value="km_asc">Menor KM</option>
+                </select>
+            </div>
+
+            <!-- GRID DE VEÍCULOS -->
+            <div class="vehicles-grid" id="vehiclesGrid">
+                <!-- Cards serão inseridos aqui via JavaScript -->
+            </div>
+
+            <!-- LOADING -->
+            <div class="loading" id="loading" style="display: none;">
+                <p>Carregando veículos...</p>
+            </div>
+
+            <!-- SEM RESULTADOS -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3 class="no-results-title">Nenhum veículo encontrado</h3>
+                <p class="no-results-text">Tente ajustar os filtros para encontrar o carro ideal</p>
+                <button class="btn-primary" onclick="limparFiltros()" style="margin-top: 1rem;">Limpar Filtros</button>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <div class="pagination" id="pagination" style="display: none;">
+                <!-- Botões de paginação serão inseridos aqui -->
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
