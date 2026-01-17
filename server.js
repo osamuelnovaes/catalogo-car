@@ -280,6 +280,24 @@ app.post('/api/vehicles', requireAuth, upload.array('images', 20), async (req, r
     }
 });
 
+// Adicionar imagem via URL externa (admin)
+app.post('/api/vehicles/:id/image-url', requireAuth, async (req, res) => {
+    try {
+        const vehicleId = req.params.id;
+        const { imageUrl, isPrimary, orderIndex } = req.body;
+
+        await dbRun(
+            'INSERT INTO vehicle_images (vehicle_id, image_path, is_primary, order_index) VALUES (?, ?, ?, ?)',
+            [vehicleId, imageUrl, isPrimary ? 1 : 0, orderIndex || 0]
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Erro ao adicionar imagem:', error);
+        res.status(500).json({ error: 'Erro ao adicionar imagem' });
+    }
+});
+
 // Atualizar veículo (admin)
 app.put('/api/vehicles/:id', requireAuth, upload.array('images', 20), async (req, res) => {
     try {
