@@ -256,7 +256,7 @@ app.post('/api/vehicles', requireAuth, upload.array('images', 20), async (req, r
         // Inserir veículo
         const result = await dbRun(
             `INSERT INTO vehicles (marca, modelo, ano, km, preco, cor, combustivel, cambio, descricao, destaque)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
             [marca, modelo, parseInt(ano), parseInt(km), parseFloat(preco), cor, combustivel, cambio, descricao, destaque ? 1 : 0]
         );
 
@@ -377,7 +377,7 @@ app.get('/api/stats', requireAuth, async (req, res) => {
     try {
         const totalVehicles = await dbGet('SELECT COUNT(*) as count FROM vehicles');
         const totalValue = await dbGet('SELECT SUM(preco) as total FROM vehicles');
-        const recentVehicles = await dbGet('SELECT COUNT(*) as count FROM vehicles WHERE created_at >= datetime("now", "-7 days")');
+        const recentVehicles = await dbGet('SELECT COUNT(*) as count FROM vehicles WHERE created_at >= NOW() - INTERVAL \'7 days\'');
 
         res.json({
             totalVehicles: totalVehicles.count,

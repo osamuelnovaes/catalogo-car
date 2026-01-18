@@ -1,125 +1,131 @@
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const path = require('path');
 
-const dbPath = path.join(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
+// Configuração do Pool PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
 
 // Inicializar banco de dados
-function initDatabase() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Tabela de usuários admin
-      db.run(`
-        CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          username TEXT UNIQUE NOT NULL,
-          password TEXT NOT NULL,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
+async function initDatabase() {
+  const client = await pool.connect();
 
-      // Tabela de veículos
-      db.run(`
-        CREATE TABLE IF NOT EXISTS vehicles (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          marca TEXT NOT NULL,
-          modelo TEXT NOT NULL,
-          ano INTEGER NOT NULL,
-          km INTEGER NOT NULL,
-          preco REAL NOT NULL,
-          cor TEXT,
-          combustivel TEXT,
-          cambio TEXT,
-          descricao TEXT,
-          destaque BOOLEAN DEFAULT 0,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
+  try {
+    // Tabela de usuários admin
+    await client.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
 
-      // Tabela de imagens dos veículos
-      db.run(`
-        CREATE TABLE IF NOT EXISTS vehicle_images (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          vehicle_id INTEGER NOT NULL,
-          image_path TEXT NOT NULL,
-          is_primary BOOLEAN DEFAULT 0,
-          order_index INTEGER DEFAULT 0,
-          FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
-        )
-      `, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          // Criar usuário admin padrão
-          createDefaultAdmin().then(resolve).catch(reject);
-        }
-      });
-    });
-  });
+    // Tabela de veículos
+    await client.query(`
+            CREATE TABLE IF NOT EXISTS vehicles (
+                id SERIAL PRIMARY KEY,
+                marca TEXT NOT NULL,
+                modelo TEXT NOT NULL,
+                ano INTEGER NOT NULL,
+                km INTEGER NOT NULL,
+                preco NUMERIC NOT NULL,
+                cor TEXT,
+                combustivel TEXT,
+                cambio TEXT,
+                descricao TEXT,
+                destaque BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+    // Tabela de imagens dos veículos
+    await client.query(`
+            CREATE TABLE IF NOT EXISTS vehicle_images (
+                id SERIAL PRIMARY KEY,
+                vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+                image_path TEXT NOT NULL,
+                is_primary BOOLEAN DEFAULT FALSE,
+                order_index INTEGER DEFAULT 0
+            )
+        `);
+
+    // Criar usuário admin padrão
+    await createDefaultAdmin(client);
+
+    console.log('✅ Banco de dados PostgreSQL inicializado');
+  } catch (error) {
+    console.error('Erro ao inicializar banco:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 // Criar usuário admin padrão
-async function createDefaultAdmin() {
-  return new Promise(async (resolve, reject) => {
-    db.get('SELECT * FROM users WHERE username = ?', ['admin'], async (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      
-      if (!row) {
-        const hashedPassword = await bcrypt.hash('admin123', 10);
-        db.run(
-          'INSERT INTO users (username, password) VALUES (?, ?)',
-          ['admin', hashedPassword],
-          (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              console.log('✅ Usuário admin criado (username: admin, password: admin123)');
-              resolve();
-            }
-          }
-        );
-      } else {
-        console.log('✅ Usuário admin já existe');
-        resolve();
-      }
-    });
-  });
+async function createDefaultAdmin(client) {
+  const result = await client.query('SELECT * FROM users WHERE username = $1', ['admin']);
+
+  if (result.rows.length === 0) {
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    await client.query(
+      'INSERT INTO users (username, password) VALUES ($1, $2)',
+      ['admin', hashedPassword]
+    );
+    console.log('✅ Usuário admin criado (username: admin, password: admin123)');
+  } else {
+    console.log('✅ Usuário admin já existe');
+  }
 }
 
-// Funções auxiliares
-const dbRun = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
-      if (err) reject(err);
-      else resolve(this);
-    });
-  });
+// Funções auxiliares compatíveis com a interface anterior
+const dbRun = async (sql, params = []) => {
+  // Converter placeholders ? para $1, $2, etc (formato PostgreSQL)
+  let pgSql = sql;
+  let paramIndex = 1;
+  while (pgSql.includes('?')) {
+    pgSql = pgSql.replace('?', `$${paramIndex}`);
+    paramIndex++;
+  }
+
+  const result = await pool.query(pgSql, params);
+
+  // Simular o comportamento do SQLite para INSERT (lastID)
+  return {
+    lastID: result.rows[0]?.id || null,
+    changes: result.rowCount
+  };
 };
 
-const dbGet = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
+const dbGet = async (sql, params = []) => {
+  // Converter placeholders ? para $1, $2, etc
+  let pgSql = sql;
+  let paramIndex = 1;
+  while (pgSql.includes('?')) {
+    pgSql = pgSql.replace('?', `$${paramIndex}`);
+    paramIndex++;
+  }
+
+  const result = await pool.query(pgSql, params);
+  return result.rows[0] || null;
 };
 
-const dbAll = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
+const dbAll = async (sql, params = []) => {
+  // Converter placeholders ? para $1, $2, etc
+  let pgSql = sql;
+  let paramIndex = 1;
+  while (pgSql.includes('?')) {
+    pgSql = pgSql.replace('?', `$${paramIndex}`);
+    paramIndex++;
+  }
+
+  const result = await pool.query(pgSql, params);
+  return result.rows;
 };
 
 module.exports = {
-  db,
+  pool,
   initDatabase,
   dbRun,
   dbGet,
